@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
 using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -128,9 +129,8 @@ namespace WindowsFormsApp1
         }
 
         // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНЫХ СИМВОЛОВ М
-        private string CalculateRedundantBits()
+        private string CalculateRedundantBits(string input)
         {
-            string input = textBox1.Text;
             int n = input.Length;
 
             int R = 0;
@@ -184,7 +184,7 @@ namespace WindowsFormsApp1
             int n = input.Length;
             int m = input.Count(c => c == '1');
             double l = Math.Log(n) / Math.Log(2);
-            string R = CalculateRedundantBits();
+            string R = CalculateRedundantBits(input);
 
             // СТРОКА КОДОВОЙ КОМБИНАЦИИ
             string result = input + R; 
@@ -226,9 +226,6 @@ namespace WindowsFormsApp1
             return parity == 1 ? '1' : '0';
         }
 
-
-
-
         // ПОЛУЧЕНИЕ ЗНАЧЕНИЯ ИЗ ВЫПАДАЮЩЕГО СПИСКА ОТ A0.. AM
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -239,13 +236,8 @@ namespace WindowsFormsApp1
         // ОБНОВЛЕНИЕ ПРИНЯТОЙ КОДОВОЙ КОМБИНАЦИИ ПРИ ВВЕДЕНИИ КОДОВОЙ КОМБИНАЦИИ ЧТОБЫ ОТОБРАЖАЛОСЬ ТО ЖЕ ЗНАЧЕНИЕ
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
-
             string generatedCode = textBox5.Text;
-
-
             textBox6.Text = generatedCode;
-
-
         }
         /////////////////
         /////////////////////////////////
@@ -256,102 +248,119 @@ namespace WindowsFormsApp1
             CalculateAndDisplayChecks();
         }
 
-       
-
         // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЙ ПРОВЕРОЧНЫЙХ СИМВОЛОВ E0 .. Em
         private void CalculateAndDisplayChecks()
         {
-            /*
+            
             string receivedCode = textBox6.Text;
-
-
+            string R = textBox4.Text;
             if ((receivedCode.Length < 1 || receivedCode.Length > 26) || (textBox6.Text.Length != textBox5.Text.Length) || !IsBinaryString((receivedCode)))
             {
                 MessageBox.Show("Принятая кодовая комбинация не совпадает по длине с кодовой комбинацией или содержит недопустимые символы. ");
                 comboBox1.Items.Clear();
                 return;
             }
+
+            int m = 0;
+            int j = 1;
+            for (int i = 0; i < receivedCode.Length-R.Length; i++)
+            {
+                if (receivedCode[i] == '1')
+                {
+                    comboBox1.Items.Add($"a*{j} = {i}");
+                    m++;
+                    j++;
+                }
+            }
+            textBox9.Text = m.ToString();
+
+            receivedCode.Remove(receivedCode.Length - R.Length);
+            string R_new = CalculateRedundantBits(receivedCode);
+
+            textBox12.Text = R_new.ToString();
+
+            int old_m = int.Parse(textBox2.Text);
+            UpdateTextBoxes(old_m, m, receivedCode);
             
+        }
 
-            int m = CalculateRedundantBits() - 1;
-
-
-            int[] checks = new int[m + 1];
-
-
-            checks[0] = CalculateErrorCheck(receivedCode, 0);
-
-
-            for (int i = 0; i < m; i++)
+        private int CalculateJ(int k, string input, string R)
+        {
+            int n = input.Length;
+            int t = 0;
+            for (int i = 0; i < n; i++)
             {
-                int pos = (int)Math.Pow(2, i);
-                checks[i + 1] = CalculateErrorCheck(receivedCode, pos);
+                if (input[i] == '1')
+                {
+                    t += i;
+                }
             }
+            //int J = Convert.ToInt32(J, 2);
+            int lowerPower = (int)Math.Pow(2, (int)Math.Log(t, 2));
 
+            // Находим ближайшую степень двойки, которая больше числа
+            int higherPower = lowerPower * 2;
 
-            comboBox1.Items.Clear();
-            for (int i = 0; i < checks.Length; i++)
+            // Вычисляем разницу с ближайшей степенью двойки
+            int differenceWithLower = Math.Abs(t - lowerPower);
+            int differenceWithHigher = Math.Abs(t - higherPower);
+
+            // Возвращаем минимальную разницу
+            int temp = Math.Min(differenceWithLower, differenceWithHigher);
+
+            t = (t % n + n) % n;
+            int J = 0;
+            if (k == 1)
             {
-                comboBox1.Items.Add($"E{i} = {checks[i]}");
+                J = Convert.ToInt32(R, 2) - t;
             }
-
-
-            if (comboBox1.Items.Count > 0)
+            else if (k == 2)
             {
-               // comboBox1.SelectedIndex = 0;
+                J = t - Convert.ToInt32(R, 2);
             }
-            // КОНТРОЛЬНОЕ ЧИСЛО S   
-
-            string controlNumber = string.Join("", checks.Skip(1).Reverse().Select(c => c.ToString()));
-            textBox9.Text = controlNumber;
-
-
-            UpdateTextBoxes(checks[0], controlNumber); */
+            J = (J % n + n) % n;
+            return J;
         }
 
         // РАСЧЁТ r N и результата
-        private void UpdateTextBoxes(int e0, string controlNumber)
+        private void UpdateTextBoxes(int old_m, int m, string code)
         {
-
-            int controlNumberDecimal = Convert.ToInt32(controlNumber, 2);
-
-            // Нет ошибок
-            if (controlNumberDecimal == 0 && e0 == 0)
+            string R = textBox11.Text;
+            string old_R = textBox4.Text;
+            int raz = 0;
+            for(int i=0; i < R.Length; i++)
             {
-                textBox8.Text = "0";
-                textBox7.Text = "";
-                textBox10.Text = RemoveBits(textBox6.Text);
+                if (R[i] != old_R[i])
+                {
+                    raz++;
+                }
             }
-            // Однократная ошибка
-            else if (controlNumberDecimal != 0 && e0 == 1)
+            if (m - old_m == 1 || m - old_m == -1 || raz==1)
             {
                 textBox8.Text = "1";
-                textBox7.Text = controlNumberDecimal.ToString();
-                textBox10.Text = "";
-
-
-                string correctedCode = CorrectError(textBox6.Text, controlNumberDecimal); // Исправляет ошибку
-                textBox10.Text = RemoveBits(correctedCode); // Убирает контрольные биты
+                textBox10.Text = textBox1.Text;
+                /*if (raz == 1)
+                {
+                    textBox10.Text = textBox1.Text;
+                }
+                else if(raz==0)
+                {
+                    int J = 0;
+                    if(m - old_m == 1)
+                    {
+                        J=CalculateJ(1, code, old_R);
+                    }
+                    else if(m-old_m == -1)
+                    {
+                        J=CalculateJ(2, code, old_R);
+                    }
+                    textBox7.Text = J.ToString();
+                    //code.Remove(J, 1);
+                    textBox10.te
+                } */
             }
+            //else if (m - old_m == 0 && )
 
-            // Двукратная ошибка
-            else if (controlNumberDecimal != 0 && e0 == 0)
-            {
-                textBox8.Text = "2";
-                textBox10.Text = "Повторная передача";
-                textBox7.Text = "";
-            }
-
-            // Трехкратная ошибка  ????????????????
-            else if (controlNumberDecimal == 0 && e0 == 1)
-            {
-                textBox8.Text = "3 и более";
-                textBox7.Text = "";
-                textBox10.Text = "";
-
-
-                textBox10.Text = "Трёхкратная ошибка";
-            }
         }
 
         // Метод для исправления однократной ошибки
