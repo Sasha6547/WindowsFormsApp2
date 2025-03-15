@@ -66,16 +66,18 @@ namespace WindowsFormsApp1
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
           
-            textBox2.Text = ""; // Количество информационных символов
-            textBox3.Text = ""; // Количество проверочных символов
-            textBox4.Text = ""; // Общее число символов
+            textBox2.Text = ""; // Количество единиц(вес кода)
+            textBox3.Text = ""; // Число проверочных символов
+            textBox4.Text = ""; // Значение проверочных символов
             textBox5.Text = ""; // Кодовая комбинация
             textBox6.Text = ""; // Кодовая комбинация для проверки
-            textBox7.Text = ""; // Позиция ошибки
-            textBox8.Text = ""; // Количество ошибок
+            textBox7.Text = ""; // Значение веса принятой кодовой комбинации
+            textBox8.Text = ""; // Кратность ошибки
             textBox9.Text = ""; // Контрольное число
             textBox10.Text = ""; // Исправленный код
-            comboBox1.Items.Clear(); // E
+            textBox11.Text = ""; // Количество символов в информационной последовательности
+            textBox12.Text = ""; // Проверочная последовательность
+            comboBox1.Items.Clear(); // а*
             comboBox2.Items.Clear(); // a
         }
         private void textBox6_TextChanged(object sender, EventArgs e)
@@ -86,7 +88,8 @@ namespace WindowsFormsApp1
             textBox8.Text = ""; // Количество ошибок
             textBox9.Text = ""; // Контрольное число
             textBox10.Text = ""; // Исправленный код
-            comboBox1.Items.Clear(); // E
+            textBox12.Text = "";
+            comboBox1.Items.Clear(); // а*
             
         }
 
@@ -95,29 +98,20 @@ namespace WindowsFormsApp1
         {
            
             string input = textBox1.Text;
-          
            
-            
-           
-            if (input.Length < 1 || input.Length > 20 || !IsBinaryString(input))
+            if (input.Length < 1 || input.Length > 10 || !IsBinaryString(input))
             {
-                MessageBox.Show("Введите двоичную последовательность длиной от 1 до 20 символов (только 0 и 1).");
+                MessageBox.Show("Введите двоичную последовательность длиной от 1 до 10 символов (только 0 и 1).");
                 return;
             }
 
-           
-            int k = input.Length;
-
-           
-            int m = CalculateRedundantBits(k);
-
+            int n = input.Length;
+            int m = input.Count(c => c == '1');
+            double l = Math.Log(n) / Math.Log(2);
             
-            int n = k + m + 1; 
-
-            
-            textBox2.Text = k.ToString(); // Количество информационных символов
-            textBox3.Text = m.ToString(); // Количество проверочных символов
-            textBox4.Text = n.ToString(); // Общее число символов
+            textBox2.Text = m.ToString(); // Количество единиц в последовательности
+            textBox3.Text = l.ToString(); // Количество проверочных символов
+            textBox11.Text = n.ToString(); // Общее число символов
         }
 
         // ЯВЛЯЕТСЯ ЛИ СТРОКА ДВОИЧНОЙ
@@ -134,76 +128,36 @@ namespace WindowsFormsApp1
         }
 
         // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНЫХ СИМВОЛОВ М
-        private int CalculateRedundantBits(int k)
+        private string CalculateRedundantBits()
         {
-            int m = 0;
-            while (Math.Pow(2, m) < (k + m + 1))
+            string input = textBox1.Text;
+            int n = input.Length;
+
+            int R = 0;
+            for(int i=0; i < n; i++)
             {
-                m++;
+                if (input[i] == '1')
+                {
+                    R += i;
+                }
             }
-            return m;
+
+            int lowerPower = (int)Math.Pow(2, (int)Math.Log(R, 2));
+
+            // Находим ближайшую степень двойки, которая больше числа
+            int higherPower = lowerPower * 2;
+
+            // Вычисляем разницу с ближайшей степенью двойки
+            int differenceWithLower = Math.Abs(R - lowerPower);
+            int differenceWithHigher = Math.Abs(R - higherPower);
+
+            // Возвращаем минимальную разницу
+            int temp = Math.Min(differenceWithLower, differenceWithHigher);
+
+            R = (R % n + n) % n;
+
+            return Convert.ToString(R, 2);
         }
-
-
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label12_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        // КНОПКА ВЫХОДА
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-        // КНОПКА ВЫХОДА
-
-
-
-
-
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-        private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {
-        }
-
 
         // КНОПКА КОДИРОВАТЬ
         private void button2_Click(object sender, EventArgs e)
@@ -212,7 +166,8 @@ namespace WindowsFormsApp1
             textBox8.Text = ""; // Количество ошибок
             textBox9.Text = ""; // Контрольное число
             textBox10.Text = ""; // Исправленный код
-            comboBox1.Items.Clear(); // E
+            textBox12.Text = "";
+            comboBox1.Items.Clear(); // a*
             if (textBox2.Text == "")
             {
                 MessageBox.Show("Сначала введите информационную последовательность");
@@ -220,87 +175,35 @@ namespace WindowsFormsApp1
             }
             string input = textBox1.Text;
 
-           
-            if (input.Length < 1 || input.Length > 20 || !IsBinaryString(input))
+            if (input.Length < 1 || input.Length > 10 || !IsBinaryString(input))
             {
                 MessageBox.Show("Введите двоичную последовательность длиной до 20 символов (только 0 и 1).");
                 return;
             }
 
-           
-            int k = input.Length;
-           
-            int m = CalculateRedundantBits(k);
-
-            int n = k + m;
-
-           
-            char[] codeword = new char[n + 1];
-
-           
-            int j = 0; 
-            for (int i = 1; i <= n; i++)
-            {
-                if (IsPowerOfTwo(i)) 
-                {
-                    codeword[i] = '0'; 
-                }
-                else
-                {
-                    codeword[i] = input[j]; 
-                    j++;
-                }
-            }
-
-            // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЙ ПРОВЕРОЧНЫХ СИМВОЛОВ
-            for (int i = 0; i < m; i++)
-            {
-                int pos = (int)Math.Pow(2, i); 
-                codeword[pos] = CalculateParity(codeword, pos, n); 
-            }
-
-            // a0 - сумма всех символов
-            int sum = 0;
-            for (int i = 1; i <= n; i++)
-            {
-                if (codeword[i] == '1')
-                {
-                    sum++;
-                }
-            }
-            codeword[0] = (sum % 2 == 0) ? '0' : '1'; 
+            int n = input.Length;
+            int m = input.Count(c => c == '1');
+            double l = Math.Log(n) / Math.Log(2);
+            string R = CalculateRedundantBits();
 
             // СТРОКА КОДОВОЙ КОМБИНАЦИИ
-            string result = new string(codeword, 0, codeword.Length); 
-
-            
+            string result = input + R; 
             textBox5.Text = result;
-
-            
             comboBox2.Items.Clear();
-
-            // Добавление a0 в ComboBox
-            comboBox2.Items.Add($"a0 = {codeword[0]}");
+            int j = 1;
 
             // Добавление элементы a1, a2 .. am
-            for (int i = 0; i < m; i++)
+            for (int i = 0; i < n; i++)
             {
-                int pos = (int)Math.Pow(2, i);
-                comboBox2.Items.Add($"a{pos} = {codeword[pos]}"); 
+                if (input[i] == '1')
+                {
+                    comboBox2.Items.Add($"a{j} = {i}");
+                    j++;
+                }                
             }
 
-
-            // Выбор первого элемента для поля ввода a0=...
-            /*
-            if (comboBox2.Items.Count > 0)
-            {
-                comboBox2.SelectedIndex = 0;
-            }
-            */
+            textBox4.Text = R;
         }
-
-
-
 
         // ЯВЛЯЕТСЯ ЛИ ЧИСЛО СТЕПЕНЬЮ ДВОЙКИ
         private bool IsPowerOfTwo(int x)
@@ -329,34 +232,25 @@ namespace WindowsFormsApp1
         // ПОЛУЧЕНИЕ ЗНАЧЕНИЯ ИЗ ВЫПАДАЮЩЕГО СПИСКА ОТ A0.. AM
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
             string selectedValue = comboBox2.SelectedItem.ToString();
-
-
         }
 
 
         // ОБНОВЛЕНИЕ ПРИНЯТОЙ КОДОВОЙ КОМБИНАЦИИ ПРИ ВВЕДЕНИИ КОДОВОЙ КОМБИНАЦИИ ЧТОБЫ ОТОБРАЖАЛОСЬ ТО ЖЕ ЗНАЧЕНИЕ
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
-            
+
             string generatedCode = textBox5.Text;
 
-            
+
             textBox6.Text = generatedCode;
 
 
         }
-
-
-
-
-
         /////////////////
         /////////////////////////////////
 
-
-        // КНОПКА ДЕКАДИРОВАНИЯ
+        // КНОПКА ДЕКОДИРОВАНИЯ
         private void button3_Click(object sender, EventArgs e)
         {
             CalculateAndDisplayChecks();
@@ -367,7 +261,7 @@ namespace WindowsFormsApp1
         // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЙ ПРОВЕРОЧНЫЙХ СИМВОЛОВ E0 .. Em
         private void CalculateAndDisplayChecks()
         {
-
+            /*
             string receivedCode = textBox6.Text;
 
 
@@ -379,7 +273,7 @@ namespace WindowsFormsApp1
             }
             
 
-            int m = CalculateRedundantBits(receivedCode.Length) - 1;
+            int m = CalculateRedundantBits() - 1;
 
 
             int[] checks = new int[m + 1];
@@ -412,7 +306,7 @@ namespace WindowsFormsApp1
             textBox9.Text = controlNumber;
 
 
-            UpdateTextBoxes(checks[0], controlNumber);
+            UpdateTextBoxes(checks[0], controlNumber); */
         }
 
         // РАСЧЁТ r N и результата
@@ -600,5 +494,64 @@ namespace WindowsFormsApp1
         {
 
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // КНОПКА ВЫХОДА
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+        // КНОПКА ВЫХОДА
+
+
+
+
+
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+        }
+
     }
 }
