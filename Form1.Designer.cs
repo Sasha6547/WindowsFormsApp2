@@ -37,10 +37,10 @@ namespace WindowsFormsApp1
             this.R_textBox = new System.Windows.Forms.TextBox();
             this.code_textBox = new System.Windows.Forms.TextBox();
             this.acceptcode_textBox = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox = new System.Windows.Forms.TextBox();
+            this.J_textBox = new System.Windows.Forms.TextBox();
+            this.mistake_textBox = new System.Windows.Forms.TextBox();
             this.m_star_textBox = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.result_textBox = new System.Windows.Forms.TextBox();
             this.enter_button = new System.Windows.Forms.Button();
             this.encode_button = new System.Windows.Forms.Button();
             this.decode_button = new System.Windows.Forms.Button();
@@ -79,6 +79,7 @@ namespace WindowsFormsApp1
             // 
             // a_comboBox
             // 
+            this.a_comboBox.BackColor = System.Drawing.SystemColors.Window;
             this.a_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.a_comboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.a_comboBox.FormattingEnabled = true;
@@ -147,25 +148,25 @@ namespace WindowsFormsApp1
             this.acceptcode_textBox.TabIndex = 7;
             this.acceptcode_textBox.TextChanged += new System.EventHandler(this.acceptcode_textBox_TextChanged);
             // 
-            // textBox7
+            // J_textBox
             // 
-            this.textBox7.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox7.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox7.Location = new System.Drawing.Point(397, 344);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(75, 26);
-            this.textBox7.TabIndex = 10;
+            this.J_textBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.J_textBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.J_textBox.Location = new System.Drawing.Point(397, 344);
+            this.J_textBox.Name = "J_textBox";
+            this.J_textBox.ReadOnly = true;
+            this.J_textBox.Size = new System.Drawing.Size(75, 26);
+            this.J_textBox.TabIndex = 10;
             // 
-            // textBox
+            // mistake_textBox
             // 
-            this.textBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox.Location = new System.Drawing.Point(296, 343);
-            this.textBox.Name = "textBox";
-            this.textBox.ReadOnly = true;
-            this.textBox.Size = new System.Drawing.Size(74, 26);
-            this.textBox.TabIndex = 9;
+            this.mistake_textBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.mistake_textBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.mistake_textBox.Location = new System.Drawing.Point(296, 343);
+            this.mistake_textBox.Name = "mistake_textBox";
+            this.mistake_textBox.ReadOnly = true;
+            this.mistake_textBox.Size = new System.Drawing.Size(74, 26);
+            this.mistake_textBox.TabIndex = 9;
             // 
             // m_star_textBox
             // 
@@ -177,15 +178,15 @@ namespace WindowsFormsApp1
             this.m_star_textBox.Size = new System.Drawing.Size(74, 26);
             this.m_star_textBox.TabIndex = 8;
             // 
-            // textBox10
+            // result_textBox
             // 
-            this.textBox10.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox10.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox10.Location = new System.Drawing.Point(72, 401);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.ReadOnly = true;
-            this.textBox10.Size = new System.Drawing.Size(400, 26);
-            this.textBox10.TabIndex = 11;
+            this.result_textBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.result_textBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.result_textBox.Location = new System.Drawing.Point(72, 401);
+            this.result_textBox.Name = "result_textBox";
+            this.result_textBox.ReadOnly = true;
+            this.result_textBox.Size = new System.Drawing.Size(400, 26);
+            this.result_textBox.TabIndex = 11;
             // 
             // enter_button
             // 
@@ -459,9 +460,9 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.decode_button);
             this.Controls.Add(this.encode_button);
             this.Controls.Add(this.enter_button);
-            this.Controls.Add(this.textBox10);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox);
+            this.Controls.Add(this.result_textBox);
+            this.Controls.Add(this.J_textBox);
+            this.Controls.Add(this.mistake_textBox);
             this.Controls.Add(this.m_star_textBox);
             this.Controls.Add(this.acceptcode_textBox);
             this.Controls.Add(this.code_textBox);
@@ -490,10 +491,10 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.TextBox R_textBox;
         private System.Windows.Forms.TextBox code_textBox;
         private System.Windows.Forms.TextBox acceptcode_textBox;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.TextBox textBox;
+        private System.Windows.Forms.TextBox J_textBox;
+        private System.Windows.Forms.TextBox mistake_textBox;
         private System.Windows.Forms.TextBox m_star_textBox;
-        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox result_textBox;
         private System.Windows.Forms.Button enter_button;
         private System.Windows.Forms.Button encode_button;
         private System.Windows.Forms.Button decode_button;

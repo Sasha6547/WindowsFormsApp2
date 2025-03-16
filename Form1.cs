@@ -8,6 +8,8 @@ using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 
 namespace WindowsFormsApp1
@@ -63,10 +65,10 @@ namespace WindowsFormsApp1
             R_textBox.Text = ""; // Значение проверочных символов
             code_textBox.Text = ""; // Кодовая комбинация
             acceptcode_textBox.Text = ""; // Кодовая комбинация для проверки
-            textBox7.Text = ""; // Значение веса принятой кодовой комбинации
-            textBox.Text = ""; // Кратность ошибки
+            J_textBox.Text = ""; // Значение веса принятой кодовой комбинации
+            mistake_textBox.Text = ""; // Кратность ошибки
             m_star_textBox.Text = ""; // Контрольное число
-            textBox10.Text = ""; // Исправленный код
+            result_textBox.Text = ""; // Исправленный код
             n_textBox.Text = ""; // Количество символов в информационной последовательности
             R2_textBox.Text = ""; // Проверочная последовательность
             a_star_comboBox.Items.Clear(); // а*
@@ -76,10 +78,10 @@ namespace WindowsFormsApp1
         {
 
            
-            textBox7.Text = ""; // Позиция ошибки
-            textBox.Text = ""; // Количество ошибок
+            J_textBox.Text = ""; // Позиция ошибки
+            mistake_textBox.Text = ""; // Количество ошибок
             m_star_textBox.Text = ""; // Контрольное число
-            textBox10.Text = ""; // Исправленный код
+            result_textBox.Text = ""; // Исправленный код
             R2_textBox.Text = "";
             a_star_comboBox.Items.Clear(); // а*
             
@@ -120,9 +122,9 @@ namespace WindowsFormsApp1
         }
 
         // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНЫХ СИМВОЛОВ М
-        private string CalculateRedundantBits()
+        private string CalculateRedundantBits(string input)
         {
-            string input = inf_textBox.Text;
+            // string input = inf_textBox.Text;
             int n = input.Length;
 
             int R = 0;
@@ -133,7 +135,7 @@ namespace WindowsFormsApp1
                     R += i;
                 }
             }
-
+            /*
             int lowerPower = (int)Math.Pow(2, (int)Math.Log(R, 2));
 
             // Находим ближайшую степень двойки, которая больше числа
@@ -144,7 +146,7 @@ namespace WindowsFormsApp1
             int differenceWithHigher = Math.Abs(R - higherPower);
 
             // Возвращаем минимальную разницу
-            int temp = Math.Min(differenceWithLower, differenceWithHigher);
+            int temp = Math.Min(differenceWithLower, differenceWithHigher); */
 
             R = (R % n + n) % n;
 
@@ -154,10 +156,10 @@ namespace WindowsFormsApp1
         // КНОПКА КОДИРОВАТЬ
         private void encode_button_Click(object sender, EventArgs e)
         {
-            textBox7.Text = ""; // Позиция ошибки
-            textBox.Text = ""; // Количество ошибок
+            J_textBox.Text = ""; // Позиция ошибки
+            mistake_textBox.Text = ""; // Количество ошибок
             m_star_textBox.Text = ""; // Контрольное число
-            textBox10.Text = ""; // Исправленный код
+            result_textBox.Text = ""; // Исправленный код
             R2_textBox.Text = "";
             a_star_comboBox.Items.Clear(); // a*
             if (m_textBox.Text == "")
@@ -176,7 +178,7 @@ namespace WindowsFormsApp1
             int n = input.Length;
             int m = input.Count(c => c == '1');
             double l = Math.Log(n) / Math.Log(2);
-            string R = CalculateRedundantBits();
+            string R = CalculateRedundantBits(input);
 
             // СТРОКА КОДОВОЙ КОМБИНАЦИИ
             string result = input + R; 
@@ -220,62 +222,138 @@ namespace WindowsFormsApp1
         {
             CalculateAndDisplayChecks();
         }
-
         // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЙ ПРОВЕРОЧНЫЙХ СИМВОЛОВ E0 .. Em
         private void CalculateAndDisplayChecks()
         {
-            /*
-            string receivedCode = textBox6.Text;
 
-
-            if ((receivedCode.Length < 1 || receivedCode.Length > 26) || (textBox6.Text.Length != textBox5.Text.Length) || !IsBinaryString((receivedCode)))
+            string receivedCode = acceptcode_textBox.Text;
+            string R = R_textBox.Text;
+            if ((receivedCode.Length < 1 || receivedCode.Length > 26) || (acceptcode_textBox.Text.Length != code_textBox.Text.Length) || !IsBinaryString((receivedCode)))
             {
                 MessageBox.Show("Принятая кодовая комбинация не совпадает по длине с кодовой комбинацией или содержит недопустимые символы. ");
-                comboBox1.Items.Clear();
+                a_star_comboBox.Items.Clear();
                 return;
             }
-            
 
-            int m = CalculateRedundantBits() - 1;
-
-
-            int[] checks = new int[m + 1];
-
-
-            checks[0] = CalculateErrorCheck(receivedCode, 0);
-
-
-            for (int i = 0; i < m; i++)
+            int m = 0;
+            int j = 1;
+            for (int i = 0; i < receivedCode.Length - R.Length; i++)
             {
-                int pos = (int)Math.Pow(2, i);
-                checks[i + 1] = CalculateErrorCheck(receivedCode, pos);
+                if (receivedCode[i] == '1')
+                {
+                    a_star_comboBox.Items.Add($"a*{j} = {i}");
+                    m++;
+                    j++;
+                }
+            }
+            m_star_textBox.Text = m.ToString();
+
+            string inf_posl_new = receivedCode.Substring(0, inf_textBox.Text.Length);
+            string R_new = receivedCode.Substring(inf_textBox.Text.Length, R.Length);//lculateRedundantBits(inf_posl_new);
+
+            R2_textBox.Text = R_new.ToString();
+
+            int old_m = int.Parse(m_textBox.Text);
+            UpdateTextBoxes(old_m, m, receivedCode);
+
+        }
+
+        private int CalculateJ(int k, string input, string R)
+        {
+            int n = input.Length;
+            int t = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if (input[i] == '1')
+                {
+                    t += i;
+                }
             }
 
+            t = (t % n + n) % n;
 
-            comboBox1.Items.Clear();
-            for (int i = 0; i < checks.Length; i++)
+            int J = 0;
+            if (k == 1)
             {
-                comboBox1.Items.Add($"E{i} = {checks[i]}");
+                J = t - Convert.ToInt32(R, 2);
+            }
+            else if (k == 2)
+            {
+                J = Convert.ToInt32(R, 2) - t;
+            }
+            J = (J % n + n) % n;
+            return J;
+        }
+
+        // РАСЧЁТ r N и результата
+        private void UpdateTextBoxes(int old_m, int m, string code)
+        {
+            string R = R2_textBox.Text;
+            string old_R = R_textBox.Text;
+            int raz = 0;
+            int raz_ind = 8;
+
+            for (int i = 0; i < old_R.Length; i++)
+            {
+                if (R[i] != old_R[i])
+                {
+                    raz++;
+                    raz_ind+=i;
+                }
             }
 
-
-            if (comboBox1.Items.Count > 0)
+            int razlichie = 0;
+            int J = 0;
+            string code_old = inf_textBox.Text;
+            for (int i = 0; i < code_old.Length; i++)
             {
-               // comboBox1.SelectedIndex = 0;
+                if (code[i] != code_old[i])
+                {
+                    J = i;
+                    razlichie++;
+                }
             }
-            // КОНТРОЛЬНОЕ ЧИСЛО S   
-
-            string controlNumber = string.Join("", checks.Skip(1).Reverse().Select(c => c.ToString()));
-            textBox9.Text = controlNumber;
-
-
-            UpdateTextBoxes(checks[0], controlNumber); */
+        
+            if (Math.Abs(m - old_m) == 1 || raz == 1)
+            {
+                mistake_textBox.Text = "1";
+                if (raz == 1 && razlichie == 1)
+                {
+                    mistake_textBox.Text = "2";
+                    result_textBox.Text = "Один информационный и один проверочный символы.";
+                }
+                else if (m - old_m == 1)
+                {
+                    J_textBox.Text = J.ToString();//CalculateJ(2, code, old_R).ToString();
+                    result_textBox.Text = inf_textBox.Text;
+                }
+                else if (m - old_m == -1)
+                {
+                    J_textBox.Text = J.ToString();//CalculateJ(1, code, old_R).ToString();
+                    result_textBox.Text = inf_textBox.Text;
+                }
+                else if (raz == 1)
+                {
+                    J_textBox.Text = raz_ind.ToString();
+                    result_textBox.Text = inf_textBox.Text;
+                }
+            }
+            else if(code_textBox.Text == acceptcode_textBox.Text)
+            {
+                mistake_textBox.Text = "0";
+                result_textBox.Text = inf_textBox.Text;
+            }
+            else if(razlichie == 2 && raz==0)
+            {
+                mistake_textBox.Text = "2";
+                result_textBox.Text = "Симметричная ошибка в информационной части.";
+            }
         }
 
         //ВЫБОР ЭЛЕМЕНТА ИЗ ВЫПАДАЮЩЕГО СПИСКА E1..Em
         private void a_star_comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBox10.Clear();
+            result_textBox.Clear();
 
             if (a_star_comboBox.SelectedItem != null)
             {
