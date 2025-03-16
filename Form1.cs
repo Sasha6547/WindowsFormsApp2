@@ -19,12 +19,10 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.textBox1.TextChanged += new EventHandler(textBox1_TextChanged);
             this.MouseDown += new MouseEventHandler(Form1_MouseDown);
             this.MouseMove += new MouseEventHandler(Form1_MouseMove);
             this.MouseUp += new MouseEventHandler(Form1_MouseUp);
         }
-
 
         private bool dragging = false; // Флаг, указывающий, перетаскивается ли окно
         private Point dragCursor; // Точка курсора мыши при нажатии
@@ -56,48 +54,42 @@ namespace WindowsFormsApp1
             dragging = false; 
         }
 
-        private void button1_MouseClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
-
         // ОЧИЩЕНИЕ ПОЛЕЙ
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void inf_textBox_TextChanged(object sender, EventArgs e)
         {
           
-            textBox2.Text = ""; // Количество единиц(вес кода)
-            textBox3.Text = ""; // Число проверочных символов
-            textBox4.Text = ""; // Значение проверочных символов
-            textBox5.Text = ""; // Кодовая комбинация
-            textBox6.Text = ""; // Кодовая комбинация для проверки
+            m_textBox.Text = ""; // Количество единиц(вес кода)
+            l_textBox.Text = ""; // Число проверочных символов
+            R_textBox.Text = ""; // Значение проверочных символов
+            code_textBox.Text = ""; // Кодовая комбинация
+            acceptcode_textBox.Text = ""; // Кодовая комбинация для проверки
             textBox7.Text = ""; // Значение веса принятой кодовой комбинации
-            textBox8.Text = ""; // Кратность ошибки
-            textBox9.Text = ""; // Контрольное число
+            textBox.Text = ""; // Кратность ошибки
+            m_star_textBox.Text = ""; // Контрольное число
             textBox10.Text = ""; // Исправленный код
-            textBox11.Text = ""; // Количество символов в информационной последовательности
-            textBox12.Text = ""; // Проверочная последовательность
-            comboBox1.Items.Clear(); // а*
-            comboBox2.Items.Clear(); // a
+            n_textBox.Text = ""; // Количество символов в информационной последовательности
+            R2_textBox.Text = ""; // Проверочная последовательность
+            a_star_comboBox.Items.Clear(); // а*
+            a_comboBox.Items.Clear(); // a
         }
-        private void textBox6_TextChanged(object sender, EventArgs e)
+        private void acceptcode_textBox_TextChanged(object sender, EventArgs e)
         {
 
            
             textBox7.Text = ""; // Позиция ошибки
-            textBox8.Text = ""; // Количество ошибок
-            textBox9.Text = ""; // Контрольное число
+            textBox.Text = ""; // Количество ошибок
+            m_star_textBox.Text = ""; // Контрольное число
             textBox10.Text = ""; // Исправленный код
-            textBox12.Text = "";
-            comboBox1.Items.Clear(); // а*
+            R2_textBox.Text = "";
+            a_star_comboBox.Items.Clear(); // а*
             
         }
 
         // КНОПКА ВВОД
-        private void button1_Click(object sender, EventArgs e)
+        private void enter_button_Click(object sender, EventArgs e)
         {
            
-            string input = textBox1.Text;
+            string input = inf_textBox.Text;
            
             if (input.Length < 1 || input.Length > 10 || !IsBinaryString(input))
             {
@@ -109,9 +101,9 @@ namespace WindowsFormsApp1
             int m = input.Count(c => c == '1');
             double l = Math.Log(n) / Math.Log(2);
             
-            textBox2.Text = m.ToString(); // Количество единиц в последовательности
-            textBox3.Text = l.ToString(); // Количество проверочных символов
-            textBox11.Text = n.ToString(); // Общее число символов
+            m_textBox.Text = m.ToString(); // Количество единиц в последовательности
+            l_textBox.Text = l.ToString(); // Количество проверочных символов
+            n_textBox.Text = n.ToString(); // Общее число символов
         }
 
         // ЯВЛЯЕТСЯ ЛИ СТРОКА ДВОИЧНОЙ
@@ -130,7 +122,7 @@ namespace WindowsFormsApp1
         // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНЫХ СИМВОЛОВ М
         private string CalculateRedundantBits()
         {
-            string input = textBox1.Text;
+            string input = inf_textBox.Text;
             int n = input.Length;
 
             int R = 0;
@@ -160,20 +152,20 @@ namespace WindowsFormsApp1
         }
 
         // КНОПКА КОДИРОВАТЬ
-        private void button2_Click(object sender, EventArgs e)
+        private void encode_button_Click(object sender, EventArgs e)
         {
             textBox7.Text = ""; // Позиция ошибки
-            textBox8.Text = ""; // Количество ошибок
-            textBox9.Text = ""; // Контрольное число
+            textBox.Text = ""; // Количество ошибок
+            m_star_textBox.Text = ""; // Контрольное число
             textBox10.Text = ""; // Исправленный код
-            textBox12.Text = "";
-            comboBox1.Items.Clear(); // a*
-            if (textBox2.Text == "")
+            R2_textBox.Text = "";
+            a_star_comboBox.Items.Clear(); // a*
+            if (m_textBox.Text == "")
             {
                 MessageBox.Show("Сначала введите информационную последовательность");
                 return;
             }
-            string input = textBox1.Text;
+            string input = inf_textBox.Text;
 
             if (input.Length < 1 || input.Length > 10 || !IsBinaryString(input))
             {
@@ -188,8 +180,8 @@ namespace WindowsFormsApp1
 
             // СТРОКА КОДОВОЙ КОМБИНАЦИИ
             string result = input + R; 
-            textBox5.Text = result;
-            comboBox2.Items.Clear();
+            code_textBox.Text = result;
+            a_comboBox.Items.Clear();
             int j = 1;
 
             // Добавление элементы a1, a2 .. am
@@ -197,66 +189,37 @@ namespace WindowsFormsApp1
             {
                 if (input[i] == '1')
                 {
-                    comboBox2.Items.Add($"a{j} = {i}");
+                    a_comboBox.Items.Add($"a{j} = {i}");
                     j++;
                 }                
             }
 
-            textBox4.Text = R;
+            R_textBox.Text = R;
         }
-
-        // ЯВЛЯЕТСЯ ЛИ ЧИСЛО СТЕПЕНЬЮ ДВОЙКИ
-        private bool IsPowerOfTwo(int x)
-        {
-            return (x & (x - 1)) == 0;
-        }
-
-        // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНОГО СИМВОЛА
-        private char CalculateParity(char[] codeword, int pos, int n)
-        {
-            int parity = 0;
-            for (int i = 1; i <= n; i++)
-            {
-
-                if ((i & pos) != 0)
-                {
-                    parity ^= (codeword[i] == '1') ? 1 : 0; 
-                }
-            }
-            return parity == 1 ? '1' : '0';
-        }
-
-
-
 
         // ПОЛУЧЕНИЕ ЗНАЧЕНИЯ ИЗ ВЫПАДАЮЩЕГО СПИСКА ОТ A0.. AM
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void a_comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string selectedValue = comboBox2.SelectedItem.ToString();
+            string selectedValue = a_comboBox.SelectedItem.ToString();
         }
-
 
         // ОБНОВЛЕНИЕ ПРИНЯТОЙ КОДОВОЙ КОМБИНАЦИИ ПРИ ВВЕДЕНИИ КОДОВОЙ КОМБИНАЦИИ ЧТОБЫ ОТОБРАЖАЛОСЬ ТО ЖЕ ЗНАЧЕНИЕ
-        private void textBox5_TextChanged(object sender, EventArgs e)
+        private void code_textBox_TextChanged(object sender, EventArgs e)
         {
 
-            string generatedCode = textBox5.Text;
+            string generatedCode = code_textBox.Text;
 
 
-            textBox6.Text = generatedCode;
+            acceptcode_textBox.Text = generatedCode;
 
 
         }
-        /////////////////
-        /////////////////////////////////
 
         // КНОПКА ДЕКОДИРОВАНИЯ
-        private void button3_Click(object sender, EventArgs e)
+        private void decode_button_Click(object sender, EventArgs e)
         {
             CalculateAndDisplayChecks();
         }
-
-       
 
         // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЙ ПРОВЕРОЧНЫЙХ СИМВОЛОВ E0 .. Em
         private void CalculateAndDisplayChecks()
@@ -309,248 +272,21 @@ namespace WindowsFormsApp1
             UpdateTextBoxes(checks[0], controlNumber); */
         }
 
-        // РАСЧЁТ r N и результата
-        private void UpdateTextBoxes(int e0, string controlNumber)
-        {
-
-            int controlNumberDecimal = Convert.ToInt32(controlNumber, 2);
-
-            // Нет ошибок
-            if (controlNumberDecimal == 0 && e0 == 0)
-            {
-                textBox8.Text = "0";
-                textBox7.Text = "";
-                textBox10.Text = RemoveBits(textBox6.Text);
-            }
-            // Однократная ошибка
-            else if (controlNumberDecimal != 0 && e0 == 1)
-            {
-                textBox8.Text = "1";
-                textBox7.Text = controlNumberDecimal.ToString();
-                textBox10.Text = "";
-
-
-                string correctedCode = CorrectError(textBox6.Text, controlNumberDecimal); // Исправляет ошибку
-                textBox10.Text = RemoveBits(correctedCode); // Убирает контрольные биты
-            }
-
-            // Двукратная ошибка
-            else if (controlNumberDecimal != 0 && e0 == 0)
-            {
-                textBox8.Text = "2";
-                textBox10.Text = "Повторная передача";
-                textBox7.Text = "";
-            }
-
-            // Трехкратная ошибка  ????????????????
-            else if (controlNumberDecimal == 0 && e0 == 1)
-            {
-                textBox8.Text = "3 и более";
-                textBox7.Text = "";
-                textBox10.Text = "";
-
-
-                textBox10.Text = "Трёхкратная ошибка";
-            }
-        }
-
-        // Метод для исправления однократной ошибки
-        private string CorrectError(string receivedCode, int errorPosition)
-        {
-
-            int index = errorPosition;
-
-            char[] codeArray = receivedCode.ToCharArray();
-
-            // Инверсия бита
-            codeArray[index] = (codeArray[index] == '0') ? '1' : '0';
-
-
-            return new string(codeArray);
-        }
-
-        // Метод для удаления контрольных битов
-        private string RemoveBits(string correctedCode)
-        {
-            // Список для хранения битов
-            List<char> infoBits = new List<char>();
-
-            // Добавить в список только информационные
-            for (int i = 1; i < correctedCode.Length; i++)
-            {
-                if (!IsPowerOfTwo2(i)) // Если позиция не является степенью двойки
-                {
-                    infoBits.Add(correctedCode[i]);
-                }
-            }
-
-
-            return new string(infoBits.ToArray());
-        }
-
-        // Проверка степени двойки
-        private bool IsPowerOfTwo2(int x)
-        {
-            return (x > 0) && ((x & (x - 1)) == 0);
-        }
-
-
-
-
-        // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЯ ПРОВЕРОЧНОГО СИМВОЛА E0...Em
-        private int CalculateErrorCheck(string code, int pos)
-        {
-            int parity = 0;
-
-
-            if (pos == 0)
-            {
-                for (int i = 0; i < code.Length; i++)
-                {
-                    parity ^= (code[i] == '1') ? 1 : 0;
-                }
-            }
-            else
-            {
-                for (int i = 1; i < code.Length; i++)
-                {
-
-                    if ((i & pos) != 0)
-                    {
-                        parity ^= (code[i] == '1') ? 1 : 0;
-                    }
-                }
-            }
-            return parity;
-        }
-
         //ВЫБОР ЭЛЕМЕНТА ИЗ ВЫПАДАЮЩЕГО СПИСКА E1..Em
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void a_star_comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             textBox10.Clear();
 
-            if (comboBox1.SelectedItem != null)
+            if (a_star_comboBox.SelectedItem != null)
             {
-                string selectedValue = comboBox1.SelectedItem.ToString();
-
+                string selectedValue = a_star_comboBox.SelectedItem.ToString();
             }
         }
 
-
-
-
-
-        private void textBox9_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox8_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox7_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox10_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox11_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label16_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label12_Click(object sender, EventArgs e)
-        {
-
-        }
-
         // КНОПКА ВЫХОДА
-        private void button4_Click(object sender, EventArgs e)
+        private void exit_button_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        }
-        // КНОПКА ВЫХОДА
-
-
-
-
-
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-        private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {
         }
 
     }
