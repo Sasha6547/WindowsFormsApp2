@@ -121,8 +121,8 @@ namespace WindowsFormsApp1
             return true;
         }
 
-        // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНЫХ СИМВОЛОВ М
-        private string CalculateRedundantBits(string input)
+        // ВЫЧИСЛЕНИЕ ПРОВЕРОЧНЫХ СИМВОЛОВ R
+        private string CalculateRedundantBits(string input,int l)
         {
             // string input = inf_textBox.Text;
             int n = input.Length;
@@ -135,22 +135,15 @@ namespace WindowsFormsApp1
                     R += i;
                 }
             }
-            /*
-            int lowerPower = (int)Math.Pow(2, (int)Math.Log(R, 2));
-
-            // Находим ближайшую степень двойки, которая больше числа
-            int higherPower = lowerPower * 2;
-
-            // Вычисляем разницу с ближайшей степенью двойки
-            int differenceWithLower = Math.Abs(R - lowerPower);
-            int differenceWithHigher = Math.Abs(R - higherPower);
-
-            // Возвращаем минимальную разницу
-            int temp = Math.Min(differenceWithLower, differenceWithHigher); */
 
             R = (R % n + n) % n;
 
-            return Convert.ToString(R, 2);
+            //string ins_str = new string(t, l - res.Length);
+
+            string res = Convert.ToString(R, 2);
+            string paddedString = res.PadLeft(l, '0');
+
+            return paddedString;
         }
 
         // КНОПКА КОДИРОВАТЬ
@@ -177,8 +170,11 @@ namespace WindowsFormsApp1
 
             int n = input.Length;
             int m = input.Count(c => c == '1');
-            double l = Math.Log(n) / Math.Log(2);
-            string R = CalculateRedundantBits(input);
+            int l = (int)(Math.Log(n) / Math.Log(2));
+            string R = CalculateRedundantBits(input,l);
+
+            R_textBox.Text = R;
+
 
             // СТРОКА КОДОВОЙ КОМБИНАЦИИ
             string result = input + R; 
@@ -193,10 +189,8 @@ namespace WindowsFormsApp1
                 {
                     a_comboBox.Items.Add($"a{j} = {i}");
                     j++;
-                }                
+                }
             }
-
-            R_textBox.Text = R;
         }
 
         // ПОЛУЧЕНИЕ ЗНАЧЕНИЯ ИЗ ВЫПАДАЮЩЕГО СПИСКА ОТ A0.. AM
@@ -249,7 +243,8 @@ namespace WindowsFormsApp1
             m_star_textBox.Text = m.ToString();
 
             string inf_posl_new = receivedCode.Substring(0, inf_textBox.Text.Length);
-            string R_new = receivedCode.Substring(inf_textBox.Text.Length, R.Length);//lculateRedundantBits(inf_posl_new);
+            int r_length = R_textBox.Text.Length;
+            string R_new = receivedCode.Substring(inf_textBox.Text.Length, 3);//lculateRedundantBits(inf_posl_new);
 
             R2_textBox.Text = R_new.ToString();
 

@@ -1,4 +1,6 @@
 ﻿
+using System.Drawing;
+
 namespace WindowsFormsApp1
 {
     partial class Form1
@@ -68,7 +70,6 @@ namespace WindowsFormsApp1
             // 
             // a_star_comboBox
             // 
-            this.a_star_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.a_star_comboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.a_star_comboBox.FormattingEnabled = true;
             this.a_star_comboBox.Location = new System.Drawing.Point(558, 343);
@@ -80,8 +81,8 @@ namespace WindowsFormsApp1
             // a_comboBox
             // 
             this.a_comboBox.BackColor = System.Drawing.SystemColors.Window;
-            this.a_comboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.a_comboBox.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.a_comboBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.a_comboBox.FormattingEnabled = true;
             this.a_comboBox.Location = new System.Drawing.Point(553, 217);
             this.a_comboBox.Name = "a_comboBox";
@@ -345,9 +346,9 @@ namespace WindowsFormsApp1
             this.label11.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label11.Location = new System.Drawing.Point(68, 20);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(216, 19);
+            this.label11.Size = new System.Drawing.Size(136, 19);
             this.label11.TabIndex = 35;
-            this.label11.Text = "Расширенный код Хэмминга";
+            this.label11.Text = "Равновесный код";
             // 
             // label12
             // 
@@ -437,6 +438,8 @@ namespace WindowsFormsApp1
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(772, 480);
             this.ControlBox = false;
+            this.Controls.Add(this.a_star_comboBox);
+            this.Controls.Add(this.a_comboBox);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.R2_textBox);
             this.Controls.Add(this.label17);
@@ -470,8 +473,6 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.l_textBox);
             this.Controls.Add(this.m_textBox);
             this.Controls.Add(this.inf_textBox);
-            this.Controls.Add(this.a_comboBox);
-            this.Controls.Add(this.a_star_comboBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
